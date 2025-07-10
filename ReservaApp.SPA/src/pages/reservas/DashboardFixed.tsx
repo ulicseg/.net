@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Calendar, Clock, MapPin } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -6,10 +6,10 @@ import { Layout } from '../../components/layout/Layout';
 
 export default function DashboardFixed() {
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [reservas] = useState([]); // Empezamos con array vacío
 
-  console.log('Dashboard render:', { user: user?.nombre, isLoading, reservasCount: reservas.length });
+  console.log('Dashboard render:', { user: user?.nombre, reservasCount: reservas.length });
 
   return (
     <Layout>
@@ -72,7 +72,7 @@ export default function DashboardFixed() {
         </div>
 
         {/* Content */}
-        {isLoading ? (
+        {false ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
