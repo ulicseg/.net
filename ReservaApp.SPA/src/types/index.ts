@@ -77,21 +77,30 @@ export interface ReservaListResponse {
   totalPages: number;
 }
 
-// Enums matching backend (usar números como en el backend)
-export enum TipoServicio {
-  ConsultaMedica = 1,
-  TerapiaFisica = 2,
-  ConsultaNutricional = 3,
-  ExamenLaboratorio = 4,
-  ConsultaPsicologica = 5,
-  CirugiaMenor = 6
-}
+// String literal types que coinciden con el backend
+export type TipoServicio = 
+  | 'ConsultaMedica'
+  | 'TerapiaFisica' 
+  | 'ConsultaNutricional'
+  | 'ExamenLaboratorio'
+  | 'ConsultaPsicologica'
+  | 'CirugiaMenor';
 
-export enum EstadoReserva {
-  Activa = 1,
-  Completada = 2,
-  Cancelada = 3
-}
+// Mapeo para enviar a la API (valores numéricos que espera el backend)
+export const TipoServicioValues = {
+  ConsultaMedica: 1,
+  TerapiaFisica: 2,
+  ConsultaNutricional: 3,
+  ExamenLaboratorio: 4,
+  ConsultaPsicologica: 5,
+  CirugiaMenor: 6
+} as const;
+
+export type EstadoReserva = 
+  | 'Pendiente'
+  | 'Confirmada'
+  | 'Completada'
+  | 'Cancelada';
 
 // API DTO types (to match backend DTOs)
 export interface ReservaListDto {
@@ -116,18 +125,19 @@ export interface PagedResultDto<T> {
 
 // Helper objects for display and validation
 export const TipoServicioOptions = {
-  [TipoServicio.ConsultaMedica]: 'Consulta Médica',
-  [TipoServicio.TerapiaFisica]: 'Terapia Física',
-  [TipoServicio.ConsultaNutricional]: 'Consulta Nutricional',
-  [TipoServicio.ExamenLaboratorio]: 'Examen de Laboratorio',
-  [TipoServicio.ConsultaPsicologica]: 'Consulta Psicológica',
-  [TipoServicio.CirugiaMenor]: 'Cirugía Menor'
+  ConsultaMedica: 'Consulta Médica',
+  TerapiaFisica: 'Terapia Física',
+  ConsultaNutricional: 'Consulta Nutricional',
+  ExamenLaboratorio: 'Examen de Laboratorio',
+  ConsultaPsicologica: 'Consulta Psicológica',
+  CirugiaMenor: 'Cirugía Menor'
 } as const;
 
 export const EstadoReservaOptions = {
-  [EstadoReserva.Activa]: 'Activa',
-  [EstadoReserva.Completada]: 'Completada',
-  [EstadoReserva.Cancelada]: 'Cancelada'
+  Pendiente: 'Pendiente',
+  Confirmada: 'Confirmada',
+  Completada: 'Completada',
+  Cancelada: 'Cancelada'
 } as const;
 
 // QR types

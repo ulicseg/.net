@@ -1,16 +1,16 @@
-import {
-    AlertCircle,
-    ArrowLeft,
-    Calendar,
-    FileText,
-    Save
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { 
+  ArrowLeft, 
+  Calendar, 
+  FileText, 
+  Save, 
+  AlertCircle
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { reservaService } from '../../services/reservaService';
-import type { CreateReservaRequest, UpdateReservaRequest } from '../../types';
-import { TipoServicio, TipoServicioOptions } from '../../types';
+import { TipoServicioOptions } from '../../types';
+import type { TipoServicio, CreateReservaRequest, UpdateReservaRequest } from '../../types';
 
 interface FormData {
   titulo: string;
@@ -28,7 +28,7 @@ export default function ReservaForm() {
     titulo: '',
     descripcion: '',
     fechaReserva: '',
-    tipoServicio: TipoServicio.ConsultaMedica
+    tipoServicio: 'ConsultaMedica'
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -68,13 +68,9 @@ export default function ReservaForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
-    // Para tipoServicio, convertir string a número (enum)
-    const processedValue = name === 'tipoServicio' ? parseInt(value) as TipoServicio : value;
-    
     setFormData(prev => ({
       ...prev,
-      [name]: processedValue
+      [name]: value
     }));
     
     // Limpiar error de validación para este campo

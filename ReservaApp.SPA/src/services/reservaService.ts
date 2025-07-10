@@ -1,4 +1,5 @@
 import { apiClient } from './apiClient';
+import { TipoServicioValues } from '../types';
 import type { 
   Reserva, 
   CreateReservaRequest, 
@@ -75,15 +76,27 @@ export class ReservaService {
    */
   async createReserva(reservaData: CreateReservaRequest): Promise<Reserva> {
     try {
-      const response = await apiClient.post<ApiResponse<Reserva>>('/reservas', reservaData);
+      console.log('Enviando datos para crear reserva:', reservaData);
+      
+      // Convertir el tipoServicio string a número que espera la API
+      const requestData = {
+        ...reservaData,
+        tipoServicio: TipoServicioValues[reservaData.tipoServicio]
+      };
+      
+      console.log('Datos convertidos para API:', requestData);
+      const response = await apiClient.post<ApiResponse<Reserva>>('/reservas', requestData);
+      console.log('Respuesta de crear reserva:', response);
 
       if (response.success && response.data) {
         return response.data;
       }
 
-      throw new Error('No se pudo crear la reserva');
+      throw new Error(response.message || 'No se pudo crear la reserva');
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Error al crear la reserva');
+      console.error('Error al crear reserva:', error);
+      console.error('Respuesta del error:', error.response?.data);
+      throw new Error(error.response?.data?.message || error.message || 'Error al crear la reserva');
     }
   }
 
@@ -92,7 +105,16 @@ export class ReservaService {
    */
   async updateReserva(id: number, reservaData: UpdateReservaRequest): Promise<Reserva> {
     try {
-      const response = await apiClient.put<ApiResponse<Reserva>>(`/reservas/${id}`, reservaData);
+      console.log('Enviando datos para actualizar reserva:', reservaData);
+      
+      // Convertir el tipoServicio string a número que espera la API
+      const requestData = {
+        ...reservaData,
+        tipoServicio: TipoServicioValues[reservaData.tipoServicio]
+      };
+      
+      console.log('Datos convertidos para API:', requestData);
+      const response = await apiClient.put<ApiResponse<Reserva>>(`/reservas/${id}`, requestData);
 
       if (response.success && response.data) {
         return response.data;
@@ -100,6 +122,7 @@ export class ReservaService {
 
       throw new Error('No se pudo actualizar la reserva');
     } catch (error: any) {
+      console.error('Error al actualizar reserva:', error);
       throw new Error(error.response?.data?.message || 'Error al actualizar la reserva');
     }
   }
