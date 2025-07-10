@@ -72,10 +72,11 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
-            "http://localhost:3000", // React development server
-            "http://localhost:5173", // Vite development server
-            "http://localhost:5174", // Vite development server (puerto alternativo)
-            "https://localhost:7096" // MVC application
+            "http://localhost:3000",  // React development server
+            "http://localhost:5173",  // Vite development server (SPA)
+            "http://localhost:5174",  // Vite development server (puerto alternativo)
+            "https://localhost:7092", // MVC application (puerto correcto)
+            "http://localhost:5019"   // MVC application HTTP
         )
         .AllowAnyMethod()
         .AllowAnyHeader()
