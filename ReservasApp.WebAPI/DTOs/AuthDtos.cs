@@ -53,6 +53,31 @@ namespace ReservasApp.WebAPI.DTOs
         public string Message { get; set; } = string.Empty;
     }
 
+    public class ForgotPasswordRequestDto
+    {
+        [Required(ErrorMessage = "El email es obligatorio")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido")]
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public class ResetPasswordRequestDto
+    {
+        [Required(ErrorMessage = "El email es obligatorio")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "El token es obligatorio")]
+        public string Token { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La nueva contraseña es obligatoria")]
+        [StringLength(100, ErrorMessage = "La contraseña debe tener al menos {2} caracteres", MinimumLength = 6)]
+        public string NewPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La confirmación de contraseña es obligatoria")]
+        [Compare("NewPassword", ErrorMessage = "Las contraseñas no coinciden")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
     public class UserDto
     {
         public string Id { get; set; } = string.Empty;

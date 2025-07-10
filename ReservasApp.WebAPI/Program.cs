@@ -90,7 +90,12 @@ builder.Services.AddAutoMapper(typeof(Program));
 #endregion
 
 #region Servicios y Repositorios
+// Configuración de Email Settings
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// Registro de servicios
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
 builder.Services.AddScoped<IQRRepository, QRRepository>();
 #endregion

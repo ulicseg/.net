@@ -18,6 +18,7 @@ namespace ReservasApp.WebAPI.Controllers
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
         private readonly IJwtService _jwtService;
+        private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthController> _logger;
 
@@ -25,12 +26,14 @@ namespace ReservasApp.WebAPI.Controllers
             UserManager<Usuario> userManager,
             SignInManager<Usuario> signInManager,
             IJwtService jwtService,
+            IEmailService emailService,
             IMapper mapper,
             ILogger<AuthController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
+            _emailService = emailService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -218,6 +221,133 @@ namespace ReservasApp.WebAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error obteniendo usuario actual");
+                return StatusCode(500, new AuthResponseDto
+                {
+                    Success = false,
+                    Message = "Error interno del servidor"
+                });
+            }
+        }
+
+        /// <summary>
+        /// POST /api/auth/forgot-password
+        /// Endpoint para solicitar recuperación de contraseña
+        /// </summary>
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDto request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new AuthResponseDto
+                    {
+                        Success = false,
+                        Message = "Datos inválidos",
+                        Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()
+                    });
+                }
+
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    // Por seguridad, no revelamos si el email existe o no
+                    return Ok(new AuthResponseDto
+                    {
+                        Success = true,
+                        Message = "Si el email existe, recibirás un enlace de recuperación"
+                    });
+                }
+
+                // Generar token de recuperación
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                
+                // Crear URL de callback (apuntará al frontend)
+                var callbackUrl = $"https://localhost:5173/reset-password?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(resetToken)}";
+
+                // Enviar email
+                var emailSent = await _emailService.SendPasswordResetEmailAsync(user.Email!, resetToken, callbackUrl);
+
+                if (!emailSent)
+                {
+                    _logger.LogWarning("No se pudo enviar email de recuperación a {Email}", user.Email);
+                }
+
+                _logger.LogInformation("Solicitud de recuperación de contraseña para {Email}", user.Email);
+
+                return Ok(new AuthResponseDto
+                {
+                    Success = true,
+                    Message = "Si el email existe, recibirás un enlace de recuperación"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en recuperación de contraseña para {Email}", request.Email);
+                return StatusCode(500, new AuthResponseDto
+                {
+                    Success = false,
+                    Message = "Error interno del servidor"
+                });
+            }
+        }
+
+        /// <summary>
+        /// POST /api/auth/reset-password
+        /// Endpoint para restablecer contraseña con token
+        /// </summary>
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new AuthResponseDto
+                    {
+                        Success = false,
+                        Message = "Datos inválidos",
+                        Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()
+                    });
+                }
+
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    return BadRequest(new AuthResponseDto
+                    {
+                        Success = false,
+                        Message = "Token inválido o expirado"
+                    });
+                }
+
+                // Intentar restablecer la contraseña
+                var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest(new AuthResponseDto
+                    {
+                        Success = false,
+                        Message = "Token inválido o expirado",
+                        Errors = result.Errors.Select(e => e.Description).ToList()
+                    });
+                }
+
+                _logger.LogInformation("Contraseña restablecida exitosamente para {Email}", user.Email);
+
+                // Opcionalmente, enviar email de confirmación
+                await _emailService.SendWelcomeEmailAsync(user.Email!, user.NombreCompleto);
+
+                return Ok(new AuthResponseDto
+                {
+                    Success = true,
+                    Message = "Contraseña restablecida exitosamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error restableciendo contraseña para {Email}", request.Email);
                 return StatusCode(500, new AuthResponseDto
                 {
                     Success = false,
