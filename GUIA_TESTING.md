@@ -417,14 +417,217 @@
 
 ---
 
-### **FASE 6: TESTING DE INTEGRACIÓN** 🔗
+### **FASE 6: TESTING DE FUNCIONALIDAD QR EN MVC** 📱
+
+#### 6.1 Generación de QR desde Vista de Detalles
+**Test Critical Path**: Generar QR desde detalles de reserva
+
+**Pasos**:
+1. 🔐 **Login** en MVC como usuario con reservas
+2. 📋 **Navegar** a "Mis Reservas" 
+3. 👁️ **Click** en "Ver" en cualquier reserva
+4. 🔽 **Scroll** hasta la sección de acciones
+5. 📱 **Click** en botón "Generar QR"
+
+**Resultados Esperados**:
+- ✅ **Mensaje de éxito**: "Código QR generado exitosamente"
+- ✅ **Sección QR visible**: Aparece área con vista previa del QR
+- ✅ **Imagen QR**: Se genera automáticamente la imagen del código QR
+- ✅ **URL visible**: Campo con la URL del QR (`/Reservas/QRAccess/{hash}`)
+- ✅ **Botones disponibles**: "Abrir QR", "Descargar PNG", "Copiar URL", "Ver en MVC"
+
+#### 6.2 Acciones sobre el QR Generado
+**Test Interactive Elements**: Validar todas las acciones del QR
+
+**6.2.1 Copiar URL al Portapapeles**
+- 📋 **Click** en botón "Copiar" junto a la URL
+- ✅ **Toast verde**: "URL copiada al portapapeles"
+- 📱 **Verificar**: Pegar en otro lugar para confirmar
+
+**6.2.2 Abrir QR en Nueva Pestaña**
+- 🔗 **Click** en "Abrir QR"
+- ✅ **Nueva pestaña**: Se abre la vista QRAccess
+- ✅ **Contenido correcto**: Muestra detalles de la reserva
+
+**6.2.3 Descargar QR como PNG**
+- 💾 **Click** en "Descargar PNG"
+- ✅ **Descarga automática**: Archivo `QR_Reserva_{id}.png`
+- ✅ **Imagen válida**: Abrir archivo y verificar que es un QR legible
+
+**6.2.4 Ver en MVC**
+- 👁️ **Click** en "Ver en MVC"
+- ✅ **Vista especializada**: Abre QRAccess en nueva pestaña
+- ✅ **Diseño independiente**: Sin navegación principal, optimizado para QR
+
+#### 6.3 Generación de QR desde Lista de Reservas
+**Test Quick Access**: Generar QR directamente desde el listado
+
+**Pasos**:
+1. 📋 **Navegar** a "Mis Reservas" (vista de lista)
+2. 📱 **Click** en botón "QR" en cualquier tarjeta de reserva
+3. ⏳ **Esperar** redirección
+
+**Resultados Esperados**:
+- ✅ **Permanece en lista**: No va a detalles, se queda en Index
+- ✅ **Mensaje de éxito**: "Código QR generado para '{titulo}'. Accede a los detalles para verlo."
+- ✅ **Badge verde**: Alert de éxito en la parte superior
+- ✅ **QR disponible**: Al ir a detalles, el QR ya está generado
+
+#### 6.4 Vista de Acceso por QR (QRAccess)
+**Test Public Access**: Validar la vista pública de acceso por QR
+
+**6.4.1 Acceso con QR Válido**
+1. 📱 **Generar QR** para una reserva
+2. 🔗 **Copiar URL** del QR generado
+3. 🌐 **Abrir en nueva ventana** privada/incógnito
+4. 📝 **Pegar URL** y presionar Enter
+
+**Resultados Esperados**:
+- ✅ **Vista especializada**: Layout independiente sin navegación
+- ✅ **Header elegante**: "Acceso Autorizado" con iconos y gradientes
+- ✅ **Información completa**: Todos los datos de la reserva
+- ✅ **Timestamp**: "Acceso verificado el [fecha actual]"
+- ✅ **Botón imprimir**: Funcional para imprimir la información
+- ✅ **Diseño responsive**: Se ve bien en móvil y desktop
+
+**6.4.2 Acceso con QR Inválido**
+1. 🔗 **Modificar URL**: Cambiar el hash por uno inventado
+2. 🌐 **Abrir URL** modificada
+
+**Resultados Esperados**:
+- ✅ **Vista de error**: QRError.cshtml
+- ✅ **Mensaje claro**: "Código QR no válido o expirado"
+- ✅ **Diseño elegante**: Error page profesional
+
+**6.4.3 Acceso con QR Expirado**
+1. ⏰ **Esperar 11 minutos** después de generar QR
+2. 🔗 **Acceder** a la URL del QR
+
+**Resultados Esperados**:
+- ✅ **Vista de error**: QRError.cshtml
+- ✅ **Mensaje de expiración**: "Código QR no válido o expirado"
+
+#### 6.5 Testing de Compatibilidad Visual
+**Test Cross-Platform**: Verificar en diferentes dispositivos
+
+**6.5.1 Escritorio (Desktop)**
+- 💻 **Navegador**: Chrome, Firefox, Edge
+- ✅ **QR Image**: Se genera y muestra correctamente
+- ✅ **Botones**: Todos visibles y funcionales
+- ✅ **Layout**: Distribución correcta en 2 columnas
+
+**6.5.2 Móvil (Mobile)**
+- 📱 **Dispositivo**: Smartphone o DevTools mobile view
+- ✅ **QR responsive**: Imagen se adapta al ancho de pantalla
+- ✅ **Botones apilados**: Se distribuyen verticalmente
+- ✅ **Touch friendly**: Botones suficientemente grandes
+
+**6.5.3 Impresión**
+- 🖨️ **Print preview**: Ctrl+P en vista QRAccess
+- ✅ **Optimizado**: Fondo blanco, sin navegación
+- ✅ **Información clara**: Texto legible en impresión
+
+#### 6.6 Testing de Seguridad QR
+**Test Security Layer**: Validar medidas de seguridad
+
+**6.6.1 Propiedad de Reserva**
+1. 👤 **Login** como Usuario A
+2. 📱 **Generar QR** para una reserva
+3. 🚪 **Logout** y login como Usuario B
+4. 🔗 **Intentar** acceder a la URL del QR de Usuario A
+
+**Resultados Esperados**:
+- ✅ **Acceso permitido**: QR funciona independiente del usuario logueado
+- ✅ **Solo lectura**: No se puede modificar la reserva
+
+**6.6.2 Intentar Generar QR de Reserva Ajena**
+1. 👤 **Usuario A** logueado
+2. 🕵️ **Intentar** POST a `/Reservas/GenerateQR/{id_de_usuario_B}`
+
+**Resultados Esperados**:
+- ❌ **Acceso denegado**: Error o redirección
+- ✅ **Seguridad**: No se puede generar QR de reserva ajena
+
+#### 6.7 Testing de Performance
+**Test Speed & Efficiency**: Medir rendimiento
+
+**6.7.1 Velocidad de Generación**
+- ⏱️ **Tiempo**: < 1 segundo desde click hasta imagen QR visible
+- 📊 **Network**: Verificar en DevTools que no hay requests innecesarios
+
+**6.7.2 Tamaño de Recursos**
+- 📐 **Imagen QR**: ~2-5KB por código
+- 📦 **Librería**: qrcode.min.js ~25KB (CDN)
+
+#### 6.8 Testing de Edge Cases
+**Test Corner Cases**: Situaciones límite
+
+**6.8.1 Generar Múltiples QR**
+1. 📱 **Generar QR** para una reserva
+2. 🔄 **Generar otro QR** para la misma reserva
+3. 🧪 **Verificar**: Ambos QR funcionan o solo el último
+
+**6.8.2 QR con Caracteres Especiales**
+1. ✏️ **Crear reserva** con título que contenga caracteres especiales: `"Cita médica para María José (Ñoño) - 50% urgente!"`
+2. 📱 **Generar QR**
+3. ✅ **Verificar**: URL se codifica correctamente
+
+**6.8.3 Sin Conexión JavaScript**
+1. 🚫 **Deshabilitar JavaScript** en navegador
+2. 📱 **Generar QR**
+3. ✅ **Graceful degradation**: Mensaje indicando que se requiere JS para la vista previa
+
+#### 6.9 Checklist de Finalización QR
+**Final QR Verification**: Lista de verificación completa
+
+- [ ] ✅ **Generación desde detalles**: Funcional
+- [ ] ✅ **Generación desde lista**: Funcional con redirección inteligente
+- [ ] ✅ **Vista previa QR**: Imagen se genera automáticamente
+- [ ] ✅ **Copiar URL**: Funciona con toast de confirmación
+- [ ] ✅ **Descargar PNG**: Archivo se descarga con nombre correcto
+- [ ] ✅ **Abrir QR**: Nueva pestaña con vista correcta
+- [ ] ✅ **Ver en MVC**: Vista especializada funcional
+- [ ] ✅ **Acceso público**: QRAccess funciona sin login
+- [ ] ✅ **Expiración**: QR expira después de 10 minutos
+- [ ] ✅ **Error handling**: QRError para casos inválidos
+- [ ] ✅ **Responsive**: Funciona en móvil y desktop
+- [ ] ✅ **Impresión**: Vista optimizada para imprimir
+- [ ] ✅ **Seguridad**: Solo propietario puede generar QR
+- [ ] ✅ **Performance**: Generación < 1 segundo
+- [ ] ✅ **Cross-browser**: Chrome, Firefox, Safari, Edge
+
+**🎯 RESULTADO ESPERADO**: Funcionalidad QR completamente integrada en MVC con experiencia de usuario equivalente o superior al SPA.
+
+---
+
+### **FASE 7: TESTING DE INTEGRACIÓN** 🔗
 
 🎯 **FLUJOS COMPLETADOS**:
 - ✅ Autenticación (Login/Register/Logout) - MVC y SPA
 - ✅ CRUD de Reservas - MVC y SPA 
 - ✅ Generación y acceso QR - Mejorado con vista HTML
 - ✅ Recuperación de contraseña - Con SPA integrado
+- ✅ **NUEVO**: Funcionalidad QR completa en MVC - **IMPLEMENTADO**
 - 🔄 **AHORA**: Verificar integración entre aplicaciones
+
+**🆕 NUEVA FUNCIONALIDAD - QR en MVC**:
+- [x] ✅ Métodos QR agregados al `ReservasController` - **IMPLEMENTADO**
+- [x] ✅ Integración con `IQRService` existente - **FUNCIONAL**
+- [x] ✅ Botón "Generar QR" en vista de detalles - **AGREGADO**
+- [x] ✅ Botón "QR" en lista de reservas - **AGREGADO**
+- [x] ✅ URL de descarga de imagen QR (PNG) - **IMPLEMENTADO**
+- [x] ✅ Vista de acceso QR moderna (`QRAccess.cshtml`) - **DISEÑO PREMIUM**
+- [x] ✅ Vista de error QR elegante (`QRError.cshtml`) - **IMPLEMENTADO**
+- [x] ✅ JavaScript para copiar URL al portapapeles - **FUNCIONAL**
+- [x] ✅ Auto-redirección a detalles después de generar QR - **UX MEJORADA**
+- [x] ✅ Acceso QR sin autenticación (`[AllowAnonymous]`) - **PÚBLICO**
+- [x] ✅ Integración con endpoint de WebAPI (`/api/qr/view/{hash}`) - **CONSISTENTE**
+
+**🌐 URLs QR en MVC**:
+- ✅ **Generar**: `POST /Reservas/GenerateQR/{id}` → Crea QR y redirige a detalles
+- ✅ **Descargar**: `GET /Reservas/DownloadQR/{hash}` → Descarga PNG
+- ✅ **Acceso MVC**: `GET /Reservas/QRAccess/{hash}` → Vista HTML local
+- ✅ **Acceso API**: `GET /api/qr/view/{hash}` → Vista HTML de WebAPI (default)
 
 #### 6.1 Sincronización entre Aplicaciones
 - [ ] Crear reserva en MVC

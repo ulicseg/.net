@@ -92,10 +92,87 @@
                         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Editar
                         </a>
+                        
+                        <!-- Botón para generar QR -->
+                        <form asp-action="GenerateQR" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-qrcode"></i> Generar QR
+                            </button>
+                        </form>
+                        
                         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
                             <i class="fas fa-trash"></i> Eliminar
                         </a>
                     </div>
+                    
+                    <!-- Mostrar QR si fue generado -->
+                    @if (TempData["QRUrl"] != null && TempData["QRHash"] != null)
+                    {
+                        <div class="mt-4 p-4 bg-light rounded-3 border">
+                            <h6 class="text-center mb-4">
+                                <i class="fas fa-qrcode text-success"></i> Código QR Generado Exitosamente
+                            </h6>
+                            
+                            <!-- Mostrar imagen QR -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-center mb-3">
+                                        <h6 class="text-muted mb-3">Vista Previa del QR:</h6>
+                                        <div class="bg-white p-3 rounded border d-inline-block">
+                                            <div id="qrLoading" class="text-center text-muted" style="width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;">
+                                                <div>
+                                                    <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                                                    <div>Generando QR...</div>
+                                                </div>
+                                            </div>
+                                            <img id="qrImage" src="" alt="Código QR" style="width: 200px; height: 200px; display: none;" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted small">URL de acceso:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control form-control-sm" value="@TempData["QRUrl"]" readonly id="qrUrlInput">
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="copyQRUrl('@TempData["QRUrl"]')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <a href="@TempData["QRUrl"]" target="_blank" class="btn btn-success btn-sm">
+                                            <i class="fas fa-external-link-alt"></i> Abrir QR
+                                        </a>
+                                        <a asp-action="DownloadQR" asp-route-hash="@TempData["QRHash"]" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-download"></i> Descargar PNG
+                                        </a>
+                                        <a asp-action="QRAccess" asp-route-hash="@TempData["QRHash"]" target="_blank" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> Ver en MVC
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Script para generar la imagen QR -->
+                        <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+                        <script>
+                            // Generar imagen QR en el cliente
+                            QRCode.toDataURL('@TempData["QRUrl"]', { 
+                                width: 200, 
+                                height: 200,
+                                color: {
+                                    dark: '#000000',
+                                    light: '#FFFFFF'
+                                }
+                            }, function (err, url) {
+                                if (!err) {
+                                    document.getElementById('qrImage').src = url;
+                                }
+                            });
+                        </script>
+                    }
                 </div>
             </div>
 
@@ -144,4 +221,104 @@
             background-color: #f8f9fa !important;
         }
     </style>
+}
+
+@section Scripts {
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <script>
+        // Generar QR automáticamente si hay URL
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (TempData["QRUrl"] != null)
+            {
+                <text>
+                const qrUrl = '@Html.Raw(TempData["QRUrl"])';
+                generateQRCode(qrUrl);
+                </text>
+            }
+        });
+
+        function generateQRCode(url) {
+            const qrImage = document.getElementById('qrImage');
+            const qrLoading = document.getElementById('qrLoading');
+            
+            if (qrImage && qrLoading && url) {
+                // Mostrar loading
+                qrLoading.style.display = 'flex';
+                qrImage.style.display = 'none';
+                
+                // Generar QR con opciones
+                QRCode.toDataURL(url, {
+                    width: 200,
+                    height: 200,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    },
+                    margin: 2,
+                    errorCorrectionLevel: 'M'
+                }, function (err, dataUrl) {
+                    // Ocultar loading
+                    qrLoading.style.display = 'none';
+                    
+                    if (err) {
+                        console.error('Error generando QR:', err);
+                        qrLoading.innerHTML = '<div class="text-danger"><i class="fas fa-exclamation-triangle"></i><br>Error generando QR</div>';
+                        qrLoading.style.display = 'flex';
+                    } else {
+                        qrImage.src = dataUrl;
+                        qrImage.alt = 'Código QR';
+                        qrImage.style.display = 'block';
+                        showToast('Código QR generado exitosamente', 'success');
+                    }
+                });
+            }
+        }
+
+        function copyQRUrl(url) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(function() {
+                    // Mostrar mensaje de éxito
+                    showToast('URL copiada al portapapeles', 'success');
+                }).catch(function(err) {
+                    console.error('Error al copiar: ', err);
+                    fallbackCopy(url);
+                });
+            } else {
+                fallbackCopy(url);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('URL copiada al portapapeles', 'success');
+            } catch (err) {
+                console.error('Error al copiar: ', err);
+                showToast('Error al copiar la URL', 'error');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast(message, type) {
+            // Crear toast simple
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}"></i> ${message}`;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
 } 

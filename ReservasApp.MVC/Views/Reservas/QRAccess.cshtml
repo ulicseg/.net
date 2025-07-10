@@ -1,0 +1,194 @@
+@model ReservasApp.MVC.Models.Reserva
+
+@{
+    ViewData["Title"] = "Acceso por Código QR";
+    Layout = null; // Sin layout para que sea independiente
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .qr-access-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: none;
+        }
+        .qr-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 2rem;
+            text-align: center;
+        }
+        .qr-body {
+            padding: 2rem;
+        }
+        .info-badge {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 500;
+        }
+        .print-btn {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        @@media print {
+            body { background: white !important; }
+            .no-print { display: none !important; }
+            .qr-access-card { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid d-flex align-items-center justify-content-center min-vh-100 py-4">
+        <div class="col-md-8 col-lg-6">
+            <div class="card qr-access-card">
+                <div class="qr-header">
+                    <i class="fas fa-qrcode fa-3x mb-3"></i>
+                    <h2 class="mb-2">Acceso Autorizado</h2>
+                    <p class="mb-0 opacity-75">Información exclusiva por código QR</p>
+                </div>
+                
+                <div class="qr-body">
+                    <div class="text-center mb-4">
+                        <span class="info-badge">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Acceso verificado el @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                        </span>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-heading me-2"></i>Título de la Reserva
+                                </h6>
+                                <p class="mb-0 fw-bold">@Model.Titulo</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <h6 class="text-success mb-2">
+                                    <i class="fas fa-stethoscope me-2"></i>Tipo de Servicio
+                                </h6>
+                                <p class="mb-0 fw-bold">
+                                    @Model.TipoServicio.ToString().Replace("Consulta", "Consulta ").Replace("Terapia", "Terapia ").Replace("Examen", "Examen de ").Replace("Cirugia", "Cirugía ")
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <h6 class="text-warning mb-2">
+                                    <i class="fas fa-calendar me-2"></i>Fecha y Hora
+                                </h6>
+                                <p class="mb-0 fw-bold">
+                                    @Model.FechaReserva.ToString("dddd, dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))<br>
+                                    <span class="text-primary">@Model.FechaReserva.ToString("HH:mm")</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded-3">
+                                <h6 class="text-info mb-2">
+                                    <i class="fas fa-info-circle me-2"></i>Estado
+                                </h6>
+                                <span class="badge @(Model.Estado == ReservasApp.MVC.Models.EstadoReserva.Activa ? "bg-success" : 
+                                                      Model.Estado == ReservasApp.MVC.Models.EstadoReserva.Completada ? "bg-primary" : "bg-danger") fs-6">
+                                    @Model.EstadoTexto
+                                </span>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Descripcion))
+                        {
+                            <div class="col-12">
+                                <div class="bg-light p-3 rounded-3">
+                                    <h6 class="text-secondary mb-2">
+                                        <i class="fas fa-file-alt me-2"></i>Descripción
+                                    </h6>
+                                    <p class="mb-0">@Model.Descripcion</p>
+                                </div>
+                            </div>
+                        }
+                        
+                        <div class="col-12">
+                            <div class="bg-light p-3 rounded-3">
+                                <h6 class="text-dark mb-2">
+                                    <i class="fas fa-user me-2"></i>Paciente
+                                </h6>
+                                <p class="mb-0 fw-bold">@Model.Usuario.NombreCompleto</p>
+                                <small class="text-muted">@Model.Usuario.Email</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4 no-print">
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button onclick="window.print()" class="btn print-btn">
+                                <i class="fas fa-print me-2"></i>Imprimir
+                            </button>
+                            <button onclick="window.close()" class="btn close-btn">
+                                <i class="fas fa-times me-2"></i>Cerrar
+                            </button>
+                        </div>
+                        <p class="text-muted mt-3 small">
+                            <i class="fas fa-clock me-1"></i>
+                            Este acceso expirará automáticamente por seguridad
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-cerrar después de 30 minutos por seguridad
+        setTimeout(function() {
+            if (confirm('Esta ventana se cerrará por seguridad. ¿Desea mantenerla abierta?')) {
+                // Reset del timer si el usuario quiere mantenerla abierta
+                setTimeout(arguments.callee, 1800000); // 30 minutos más
+            } else {
+                window.close();
+            }
+        }, 1800000); // 30 minutos
+    </script>
+</body>
+</html>
