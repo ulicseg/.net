@@ -24,16 +24,31 @@ export class ReservaService {
         limit: params.pageSize.toString()
       });
 
-      const response = await apiClient.get<ApiResponse<ReservaListResponse>>(
+      // La API devuelve ApiResponseDto<PagedResultDto<ReservaListDto>>
+      const response = await apiClient.get<ApiResponse<{
+        data: Reserva[];
+        totalCount: number;
+        pageNumber: number;
+        pageSize: number;
+        totalPages: number;
+      }>>(
         `/reservas?${queryParams}`
       );
 
       if (response.success && response.data) {
-        return response.data;
+        // Mapear la estructura de la API a la estructura esperada por el frontend
+        return {
+          reservas: response.data.data,
+          totalCount: response.data.totalCount,
+          currentPage: response.data.pageNumber,
+          pageSize: response.data.pageSize,
+          totalPages: response.data.totalPages
+        };
       }
 
       throw new Error('No se pudieron obtener las reservas');
     } catch (error: any) {
+      console.error('Error en getReservas:', error);
       throw new Error(error.response?.data?.message || 'Error al obtener reservas');
     }
   }

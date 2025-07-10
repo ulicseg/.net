@@ -35,18 +35,39 @@ class ApiClient {
         const token = this.getToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
+          console.log('Token agregado a la request:', token.substring(0, 20) + '...');
+        } else {
+          console.log('No hay token disponible');
         }
+        console.log('Request config:', {
+          url: config.url,
+          method: config.method,
+          baseURL: config.baseURL
+        });
         return config;
       },
       (error) => {
+        console.error('Error en request interceptor:', error);
         return Promise.reject(error);
       }
     );
 
     // Response interceptor - manejar errores globalmente
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log('Response recibida:', {
+          status: response.status,
+          url: response.config.url,
+          data: response.data
+        });
+        return response;
+      },
       (error) => {
+        console.error('Error en response interceptor:', {
+          status: error.response?.status,
+          url: error.config?.url,
+          data: error.response?.data
+        });
         if (error.response?.status === 401) {
           // Token expirado o inválido
           this.removeToken();

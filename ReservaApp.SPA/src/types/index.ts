@@ -91,6 +91,27 @@ export type EstadoReserva =
   | 'Completada'
   | 'Cancelada';
 
+// API DTO types (to match backend DTOs)
+export interface ReservaListDto {
+  id: number;
+  titulo: string;
+  fechaReserva: string;
+  fechaCreacion: string;
+  tipoServicio: string;
+  estado: string;
+  usuarioNombre: string;
+}
+
+export interface PagedResultDto<T> {
+  data: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 // Helper objects for display and validation
 export const TipoServicioOptions = {
   Consulta: 'Consulta',
