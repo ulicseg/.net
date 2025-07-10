@@ -78,13 +78,12 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection(); // Solo usar HTTPS en producción
 }
 else
 {
     app.UseDeveloperExceptionPage(); // Páginas de error detalladas en desarrollo
 }
-
-app.UseHttpsRedirection();
 app.UseStaticFiles(); // Para servir archivos CSS, JS, imágenes
 
 app.UseRouting();

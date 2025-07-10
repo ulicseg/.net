@@ -1,0 +1,190 @@
+@model ReservasApp.MVC.Models.Reserva
+
+@{
+    ViewData["Title"] = "Nueva Reserva";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus-circle"></i> Nueva Reserva</h4>
+                </div>
+                <div class="card-body">
+                    <!-- FORMULARIO FORZADO ACTUALIZACIÓN 2025-01-26 -->
+                    <form asp-controller="Reservas" asp-action="Create" method="post" id="createReservaForm">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="Titulo" class="form-label">
+                                    <i class="fas fa-heading"></i> Título de la Reserva
+                                </label>
+                                <input asp-for="Titulo" class="form-control" placeholder="Ej: Consulta médica general" />
+                                <span asp-validation-for="Titulo" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TipoServicio" class="form-label">
+                                    <i class="fas fa-stethoscope"></i> Tipo de Servicio
+                                </label>
+                                <select asp-for="TipoServicio" class="form-select">
+                                    <option value="">-- Seleccione un tipo --</option>
+                                    <option value="@((int)ReservasApp.MVC.Models.TipoServicio.ConsultaMedica)">Consulta Médica</option>
+                                    <option value="@((int)ReservasApp.MVC.Models.TipoServicio.TerapiaFisica)">Terapia Física</option>
+                                    <option value="@((int)ReservasApp.MVC.Models.TipoServicio.ConsultaNutricional)">Consulta Nutricional</option>
+                                    <option value="@((int)ReservasApp.MVC.Models.TipoServicio.ExamenLaboratorio)">Examen de Laboratorio</option>
+                                    <option value="@((int)ReservasApp.MVC.Models.TipoServicio.ConsultaPsicologica)">Consulta Psicológica</option>
+                                    <option value="@((int)ReservasApp.MVC.Models.TipoServicio.CirugiaMenor)">Cirugía Menor</option>
+                                </select>
+                                <span asp-validation-for="TipoServicio" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FechaReserva" class="form-label">
+                                    <i class="fas fa-calendar"></i> Fecha y Hora
+                                </label>
+                                <input asp-for="FechaReserva" type="datetime-local" class="form-control" 
+                                       min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="FechaReserva" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="Descripcion" class="form-label">
+                                    <i class="fas fa-info-circle"></i> Descripción (Opcional)
+                                </label>
+                                <textarea asp-for="Descripcion" class="form-control" rows="4" 
+                                          placeholder="Agregue cualquier información adicional sobre su reserva..."></textarea>
+                                <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                <div class="form-text">Máximo 500 caracteres</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                        <i class="fas fa-arrow-left"></i> Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Crear Reserva
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript funcional real -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar fecha mínima
+    const fechaInput = document.querySelector('input[type="datetime-local"]');
+    if (fechaInput) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        fechaInput.min = now.toISOString().slice(0, 16);
+    }
+
+    // Contador de caracteres para descripción
+    const descripcionTextarea = document.querySelector('textarea[name="Descripcion"]');
+    if (descripcionTextarea) {
+        const contador = document.createElement('small');
+        contador.className = 'form-text text-muted mt-1';
+        contador.textContent = '0 / 500 caracteres';
+        descripcionTextarea.parentNode.appendChild(contador);
+
+        descripcionTextarea.addEventListener('input', function() {
+            const length = this.value.length;
+            contador.textContent = `${length} / 500 caracteres`;
+            contador.className = length > 500 ? 'form-text text-danger mt-1' : 'form-text text-muted mt-1';
+        });
+    }
+
+    // Seleccionamos específicamente el formulario de creación por su id
+    const form = document.getElementById('createReservaForm');
+    console.log('🔧 Form encontrado:', form);
+    
+    if (form) {
+        console.log('✅ Agregando event listener al formulario');
+        
+        // Event listener del submit
+        form.addEventListener('submit', function(e) {
+            console.log('📤 ¡EVENTO SUBMIT DETECTADO!');
+            console.log('Event object:', e);
+            
+            const titulo = form.querySelector('input[name="Titulo"]').value.trim();
+            const fecha = form.querySelector('input[name="FechaReserva"]').value;
+            const tipo = form.querySelector('select[name="TipoServicio"]').value;
+            
+            console.log('Datos del formulario:', {titulo, fecha, tipo});
+            
+            if (!titulo || !fecha || !tipo) {
+                console.log('❌ Validación falló - faltan campos');
+                alert('Por favor complete todos los campos obligatorios');
+                e.preventDefault();
+                return false;
+            }
+            
+            console.log('✅ Validación exitosa - formulario se enviará');
+            return true;
+        });
+        console.log('✅ Event listener de submit agregado');
+        
+        // Event listener del botón
+        const submitBtn = form.querySelector('button[type="submit"]');
+        console.log('🔍 Botón submit encontrado:', submitBtn);
+        
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+                console.log('🖱️ ¡CLICK EN BOTÓN DETECTADO!');
+                console.log('Button clicked, event:', e);
+            });
+            console.log('✅ Event listener de click agregado al botón');
+        } else {
+            console.log('❌ NO se encontró el botón submit');
+        }
+        
+        // Test adicional: verificar que el formulario tenga action
+        console.log('📍 Form action:', form.action);
+        console.log('📍 Form method:', form.method);
+        
+    } else {
+        console.log('❌ NO se encontró el formulario');
+    }
+});
+</script>
+
+
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            border-radius: 15px;
+        }
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+        }
+        .btn {
+            border-radius: 8px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+    </style>
+} 

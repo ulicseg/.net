@@ -1,8 +1,588 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="hero-section text-white position-relative overflow-hidden">
+    <div class="hero-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    <div class="hero-gradient-overlay"></div>
+    <div class="hero-mesh-pattern"></div>
+    
+    <div class="container position-relative" style="z-index: 10;">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="hero-content" data-aos="fade-right">
+                    <div class="hero-badge mb-4">
+                        <span class="badge-glow">✨ Sistema Médico Premium</span>
+                    </div>
+                    <h1 class="hero-title mb-4">
+                        <span class="title-primary">Sistema de</span><br>
+                        <span class="title-gradient">Reservas Médicas</span>
+                    </h1>
+                    <p class="hero-subtitle mb-5">
+                        Transforma tu experiencia médica con nuestra plataforma inteligente.
+                        <span class="highlight-text">Gestión eficiente</span>, 
+                        <span class="highlight-text">acceso 24/7</span> y 
+                        <span class="highlight-text">seguridad garantizada</span>.
+                    </p>
+                    
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="hero-actions">
+                            <a asp-controller="Reservas" asp-action="Index" class="btn-premium btn-primary me-3">
+                                <span class="btn-icon">📅</span>
+                                <span class="btn-text">Ver Mis Reservas</span>
+                                <div class="btn-shimmer"></div>
+                            </a>
+                            <a asp-controller="Reservas" asp-action="Create" class="btn-premium btn-outline">
+                                <span class="btn-icon">➕</span>
+                                <span class="btn-text">Nueva Reserva</span>
+                                <div class="btn-shimmer"></div>
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="hero-actions">
+                            <a asp-controller="Account" asp-action="Register" class="btn-premium btn-primary me-3">
+                                <span class="btn-icon">✨</span>
+                                <span class="btn-text">Comenzar Gratis</span>
+                                <div class="btn-shimmer"></div>
+                            </a>
+                            <a asp-controller="Account" asp-action="Login" class="btn-premium btn-outline">
+                                <span class="btn-icon">🔑</span>
+                                <span class="btn-text">Iniciar Sesión</span>
+                                <div class="btn-shimmer"></div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-visual" data-aos="fade-left">
+                    <div class="medical-card">
+                        <div class="card-header">
+                            <div class="status-indicator active"></div>
+                            <span class="card-title">Consulta Médica</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="appointment-info">
+                                <div class="date-time">
+                                    <span class="date">15 ENE</span>
+                                    <span class="time">14:30</span>
+                                </div>
+                                <div class="doctor-info">
+                                    <div class="doctor-avatar">👨‍⚕️</div>
+                                    <div class="doctor-details">
+                                        <div class="doctor-name">Dr. García</div>
+                                        <div class="specialty">Medicina General</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="floating-elements">
+                        <div class="floating-el el-1">💊</div>
+                        <div class="floating-el el-2">📋</div>
+                        <div class="floating-el el-3">🩺</div>
+                        <div class="floating-el el-4">⚕️</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Features Section -->
+<div class="features-section position-relative">
+    <div class="features-bg-pattern"></div>
+    <div class="container">
+        <div class="row text-center mb-5" data-aos="fade-up">
+            <div class="col-12">
+                <div class="section-badge mb-3">
+                    <span class="badge-premium">🌟 Características Premium</span>
+                </div>
+                <h2 class="section-title mb-4">
+                    Experiencia médica <span class="text-gradient">revolucionaria</span>
+                </h2>
+                <p class="section-subtitle">
+                    Tecnología de vanguardia diseñada para transformar tu atención médica
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card-premium">
+                    <div class="feature-background">
+                        <div class="feature-glow glow-blue"></div>
+                    </div>
+                    <div class="feature-content">
+                        <div class="feature-icon-premium mb-4">
+                            <div class="icon-container icon-blue">
+                                <span class="icon-main">⚡</span>
+                                <div class="icon-particles">
+                                    <span class="particle-1">✨</span>
+                                    <span class="particle-2">💫</span>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="feature-title">Acceso Instantáneo</h4>
+                        <p class="feature-description">
+                            Plataforma disponible 24/7 con respuesta inmediata. 
+                            Agenda, modifica o cancela citas en tiempo real.
+                        </p>
+                        <div class="feature-benefits">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">⚡</span>
+                                <span class="benefit-text">Respuesta en tiempo real</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🌙</span>
+                                <span class="benefit-text">Disponible 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card-premium featured">
+                    <div class="feature-background">
+                        <div class="feature-glow glow-purple"></div>
+                    </div>
+                    <div class="featured-badge">Más Popular</div>
+                    <div class="feature-content">
+                        <div class="feature-icon-premium mb-4">
+                            <div class="icon-container icon-purple">
+                                <span class="icon-main">🎯</span>
+                                <div class="icon-particles">
+                                    <span class="particle-1">✨</span>
+                                    <span class="particle-2">💫</span>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="feature-title">Inteligencia Artificial</h4>
+                        <p class="feature-description">
+                            Sistema inteligente que aprende de tus preferencias 
+                            y optimiza tu experiencia médica automáticamente.
+                        </p>
+                        <div class="feature-benefits">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🧠</span>
+                                <span class="benefit-text">Recomendaciones personalizadas</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">📊</span>
+                                <span class="benefit-text">Análisis predictivo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card-premium">
+                    <div class="feature-background">
+                        <div class="feature-glow glow-green"></div>
+                    </div>
+                    <div class="feature-content">
+                        <div class="feature-icon-premium mb-4">
+                            <div class="icon-container icon-green">
+                                <span class="icon-main">🛡️</span>
+                                <div class="icon-particles">
+                                    <span class="particle-1">✨</span>
+                                    <span class="particle-2">💫</span>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="feature-title">Seguridad Militar</h4>
+                        <p class="feature-description">
+                            Encriptación de grado militar para proteger tu información médica. 
+                            Cumplimiento total con normativas internacionales.
+                        </p>
+                        <div class="feature-benefits">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🔐</span>
+                                <span class="benefit-text">Encriptación AES-256</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">🏆</span>
+                                <span class="benefit-text">Certificación ISO 27001</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<div class="services-section position-relative overflow-hidden">
+    <div class="services-bg-animation"></div>
+    <div class="services-overlay"></div>
+    
+    <div class="container position-relative">
+        <div class="row text-center mb-5" data-aos="fade-up">
+            <div class="col-12">
+                <div class="section-badge-dark mb-3">
+                    <span class="badge-premium-dark">⚕️ Servicios Médicos</span>
+                </div>
+                <h2 class="section-title-dark mb-4">
+                    Atención médica <span class="text-gradient-light">integral</span>
+                </h2>
+                <p class="section-subtitle-dark">
+                    Especialistas de primer nivel para cuidar tu salud
+                </p>
+            </div>
+        </div>
+        
+        <div class="services-grid">
+            <div class="service-item" data-aos="zoom-in" data-aos-delay="100">
+                <div class="service-card-modern">
+                    <div class="service-header">
+                        <div class="service-icon-modern">🩺</div>
+                        <div class="service-glow glow-medical"></div>
+                    </div>
+                    <div class="service-body">
+                        <h4 class="service-title">Medicina General</h4>
+                        <p class="service-desc">Consultas médicas integrales con profesionales certificados</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Diagnóstico</span>
+                            <span class="feature-tag">Tratamiento</span>
+                        </div>
+                    </div>
+                    <div class="service-hover-effect"></div>
+                </div>
+            </div>
+            
+            <div class="service-item" data-aos="zoom-in" data-aos-delay="200">
+                <div class="service-card-modern">
+                    <div class="service-header">
+                        <div class="service-icon-modern">🏃‍♂️</div>
+                        <div class="service-glow glow-therapy"></div>
+                    </div>
+                    <div class="service-body">
+                        <h4 class="service-title">Fisioterapia</h4>
+                        <p class="service-desc">Rehabilitación y fortalecimiento muscular especializado</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Rehabilitación</span>
+                            <span class="feature-tag">Prevención</span>
+                        </div>
+                    </div>
+                    <div class="service-hover-effect"></div>
+                </div>
+            </div>
+            
+            <div class="service-item" data-aos="zoom-in" data-aos-delay="300">
+                <div class="service-card-modern">
+                    <div class="service-header">
+                        <div class="service-icon-modern">🥗</div>
+                        <div class="service-glow glow-nutrition"></div>
+                    </div>
+                    <div class="service-body">
+                        <h4 class="service-title">Nutrición</h4>
+                        <p class="service-desc">Planes alimenticios personalizados para tu bienestar</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Planes personalizados</span>
+                            <span class="feature-tag">Seguimiento</span>
+                        </div>
+                    </div>
+                    <div class="service-hover-effect"></div>
+                </div>
+            </div>
+            
+            <div class="service-item" data-aos="zoom-in" data-aos-delay="400">
+                <div class="service-card-modern">
+                    <div class="service-header">
+                        <div class="service-icon-modern">🧪</div>
+                        <div class="service-glow glow-lab"></div>
+                    </div>
+                    <div class="service-body">
+                        <h4 class="service-title">Laboratorio</h4>
+                        <p class="service-desc">Análisis clínicos con tecnología de última generación</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Resultados rápidos</span>
+                            <span class="feature-tag">Precisión</span>
+                        </div>
+                    </div>
+                    <div class="service-hover-effect"></div>
+                </div>
+            </div>
+            
+            <div class="service-item" data-aos="zoom-in" data-aos-delay="500">
+                <div class="service-card-modern">
+                    <div class="service-header">
+                        <div class="service-icon-modern">🧠</div>
+                        <div class="service-glow glow-psychology"></div>
+                    </div>
+                    <div class="service-body">
+                        <h4 class="service-title">Psicología</h4>
+                        <p class="service-desc">Apoyo emocional y mental con terapeutas especializados</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Terapia individual</span>
+                            <span class="feature-tag">Apoyo grupal</span>
+                        </div>
+                    </div>
+                    <div class="service-hover-effect"></div>
+                </div>
+            </div>
+            
+            <div class="service-item" data-aos="zoom-in" data-aos-delay="600">
+                <div class="service-card-modern">
+                    <div class="service-header">
+                        <div class="service-icon-modern">⚕️</div>
+                        <div class="service-glow glow-surgery"></div>
+                    </div>
+                    <div class="service-body">
+                        <h4 class="service-title">Cirugía Menor</h4>
+                        <p class="service-desc">Procedimientos ambulatorios seguros y eficientes</p>
+                        <div class="service-features">
+                            <span class="feature-tag">Ambulatorio</span>
+                            <span class="feature-tag">Mínima invasión</span>
+                        </div>
+                    </div>
+                    <div class="service-hover-effect"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 70vh;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @@keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .min-vh-50 {
+            min-height: 50vh;
+        }
+
+        /* Floating Icons Animation */
+        .hero-image {
+            position: relative;
+            height: 300px;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 4rem;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 20%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 10%;
+            right: 20%;
+            animation-delay: 1.5s;
+        }
+
+        .floating-icon:nth-child(3) {
+            bottom: 30%;
+            left: 10%;
+            animation-delay: 3s;
+        }
+
+        .floating-icon:nth-child(4) {
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 4.5s;
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(5deg); }
+            66% { transform: translateY(-10px) rotate(-5deg); }
+        }
+
+        /* Buttons */
+        .btn-hover {
+            transition: all 0.3s ease;
+            border-radius: 25px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Features Section */
+        .features-section {
+            background: #f8f9fa;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .feature-highlight {
+            margin-top: 1rem;
+        }
+
+        /* Services Section */
+        .services-section {
+            background: linear-gradient(45deg, #1e3c72 0%, #2a5298 100%);
+            position: relative;
+        }
+
+        .bg-gradient {
+            background: linear-gradient(45deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Global Improvements */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .display-3, .display-5 {
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .lead {
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Improvements */
+        @@media (max-width: 768px) {
+            .hero-section {
+                min-height: 60vh;
+            }
+            
+            .floating-icon {
+                font-size: 2.5rem;
+            }
+            
+            .display-3 {
+                font-size: 2.5rem;
+            }
+            
+            .service-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+}

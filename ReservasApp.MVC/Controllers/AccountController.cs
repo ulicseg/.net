@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ReservasApp.MVC.Models;
+using ReservasApp.MVC.Models.ViewModels;
 using ReservasApp.MVC.Services;
 using System.ComponentModel.DataAnnotations;
 
@@ -298,88 +299,4 @@ namespace ReservasApp.MVC.Controllers
 
         #endregion
     }
-
-    #region ViewModels
-
-    /// <summary>
-    /// ViewModels para las vistas de autenticación
-    /// ¿Por qué ViewModels? Para separar la lógica de presentación del modelo de dominio
-    /// </summary>
-    public class RegisterViewModel
-    {
-        [Required(ErrorMessage = "El nombre es obligatorio")]
-        [StringLength(50, ErrorMessage = "El nombre no puede exceder 50 caracteres")]
-        [Display(Name = "Nombre")]
-        public string Nombre { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "El apellido es obligatorio")]
-        [StringLength(50, ErrorMessage = "El apellido no puede exceder 50 caracteres")]
-        [Display(Name = "Apellido")]
-        public string Apellido { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "El email es obligatorio")]
-        [EmailAddress(ErrorMessage = "Formato de email inválido")]
-        [Display(Name = "Email")]
-        public string Email { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "La contraseña es obligatoria")]
-        [StringLength(100, ErrorMessage = "La contraseña debe tener al menos {2} caracteres", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Contraseña")]
-        public string Password { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "La confirmación de contraseña es obligatoria")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirmar Contraseña")]
-        [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-    }
-
-    public class LoginViewModel
-    {
-        [Required(ErrorMessage = "El email es obligatorio")]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "La contraseña es obligatoria")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Contraseña")]
-        public string Password { get; set; } = string.Empty;
-
-        [Display(Name = "Recordarme")]
-        public bool RememberMe { get; set; }
-    }
-
-    public class ForgotPasswordViewModel
-    {
-        [Required(ErrorMessage = "El email es obligatorio")]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; } = string.Empty;
-    }
-
-    public class ResetPasswordViewModel
-    {
-        [Required(ErrorMessage = "El email es obligatorio")]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "La contraseña es obligatoria")]
-        [StringLength(100, ErrorMessage = "La contraseña debe tener al menos {2} caracteres", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Nueva Contraseña")]
-        public string Password { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "La confirmación es obligatoria")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirmar Contraseña")]
-        [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-
-        public string Token { get; set; } = string.Empty;
-    }
-
-    #endregion
 }
