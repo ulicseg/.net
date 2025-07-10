@@ -33,7 +33,7 @@
                         <span class="highlight-text">seguridad garantizada</span>.
                     </p>
                     
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
                         <div class="hero-actions">
                             <a asp-controller="Reservas" asp-action="Index" class="btn-premium btn-primary me-3">
