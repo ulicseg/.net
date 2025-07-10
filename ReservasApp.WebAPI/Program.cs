@@ -20,11 +20,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 #region Identity y Autenticación
 builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
 {
-    // Configuración de contraseñas
+    // Configuración de contraseñas (relajada para desarrollo)
     options.Password.RequiredLength = 6;
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
+    options.Password.RequireDigit = false;          // Sin números obligatorios
+    options.Password.RequireLowercase = true;       // Solo minúsculas obligatorias
+    options.Password.RequireUppercase = false;      // Sin mayúsculas obligatorias
     options.Password.RequireNonAlphanumeric = false;
     
     // Configuración de usuarios

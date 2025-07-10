@@ -77,19 +77,21 @@ export interface ReservaListResponse {
   totalPages: number;
 }
 
-// String literal types (better than enums for TypeScript strict mode)
-export type TipoServicio = 
-  | 'Consulta'
-  | 'Procedimiento' 
-  | 'Cirugia'
-  | 'Revision'
-  | 'Emergencia';
+// Enums matching backend (usar números como en el backend)
+export enum TipoServicio {
+  ConsultaMedica = 1,
+  TerapiaFisica = 2,
+  ConsultaNutricional = 3,
+  ExamenLaboratorio = 4,
+  ConsultaPsicologica = 5,
+  CirugiaMenor = 6
+}
 
-export type EstadoReserva = 
-  | 'Pendiente'
-  | 'Confirmada'
-  | 'Completada'
-  | 'Cancelada';
+export enum EstadoReserva {
+  Activa = 1,
+  Completada = 2,
+  Cancelada = 3
+}
 
 // API DTO types (to match backend DTOs)
 export interface ReservaListDto {
@@ -114,18 +116,18 @@ export interface PagedResultDto<T> {
 
 // Helper objects for display and validation
 export const TipoServicioOptions = {
-  Consulta: 'Consulta',
-  Procedimiento: 'Procedimiento',
-  Cirugia: 'Cirugía',
-  Revision: 'Revisión',
-  Emergencia: 'Emergencia'
+  [TipoServicio.ConsultaMedica]: 'Consulta Médica',
+  [TipoServicio.TerapiaFisica]: 'Terapia Física',
+  [TipoServicio.ConsultaNutricional]: 'Consulta Nutricional',
+  [TipoServicio.ExamenLaboratorio]: 'Examen de Laboratorio',
+  [TipoServicio.ConsultaPsicologica]: 'Consulta Psicológica',
+  [TipoServicio.CirugiaMenor]: 'Cirugía Menor'
 } as const;
 
 export const EstadoReservaOptions = {
-  Pendiente: 'Pendiente',
-  Confirmada: 'Confirmada',
-  Completada: 'Completada',
-  Cancelada: 'Cancelada'
+  [EstadoReserva.Activa]: 'Activa',
+  [EstadoReserva.Completada]: 'Completada',
+  [EstadoReserva.Cancelada]: 'Cancelada'
 } as const;
 
 // QR types

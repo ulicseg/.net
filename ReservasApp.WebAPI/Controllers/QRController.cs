@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReservasApp.WebAPI.DTOs;
 using ReservasApp.WebAPI.Repositories;
+using System.Security.Claims;
 
 namespace ReservasApp.WebAPI.Controllers
 {
@@ -111,7 +112,7 @@ namespace ReservasApp.WebAPI.Controllers
         {
             try
             {
-                var userId = User.FindFirst("sub")?.Value;
+                var userId = GetCurrentUserId();
                 if (string.IsNullOrEmpty(userId))
                 {
                     return Unauthorized(new { message = "Usuario no identificado" });
@@ -180,6 +181,15 @@ namespace ReservasApp.WebAPI.Controllers
                 _logger.LogError(ex, "Error durante limpieza de QRs expirados");
                 return StatusCode(500, new { message = "Error interno del servidor" });
             }
+        }
+
+        /// <summary>
+        /// Helper method para obtener el ID del usuario autenticado
+        /// ¿Por qué un helper? Para reutilizar código y mantener consistencia
+        /// </summary>
+        private string? GetCurrentUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
     }
 }

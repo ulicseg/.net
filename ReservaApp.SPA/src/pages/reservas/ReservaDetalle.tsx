@@ -1,20 +1,21 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Clock, 
-  User, 
-  FileText, 
-  Edit, 
-  Trash2,
-  QrCode,
+import {
+  AlertCircle,
+  ArrowLeft,
+  Calendar,
   Check,
-  AlertCircle
+  Clock,
+  Edit,
+  FileText,
+  QrCode,
+  Trash2,
+  User
 } from 'lucide-react';
+import QRCodeLib from 'qrcode';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
-import { reservaService } from '../../services/reservaService';
 import { qrService } from '../../services/qrService';
+import { reservaService } from '../../services/reservaService';
 import type { Reserva } from '../../types';
 
 export default function ReservaDetalle() {
@@ -66,8 +67,20 @@ export default function ReservaDetalle() {
 
     try {
       setIsGeneratingQR(true);
+      // Primero obtener la URL del QR desde el backend
       const response = await qrService.generateQR(reserva.id);
-      setQrUrl(response.qrUrl);
+      
+      // Luego generar la imagen QR usando la URL obtenida
+      const qrDataURL = await QRCodeLib.toDataURL(response.qrUrl, {
+        width: 256,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      
+      setQrUrl(qrDataURL);
     } catch (err) {
       console.error('Error al generar QR:', err);
       alert('Error al generar código QR');
@@ -187,8 +200,8 @@ export default function ReservaDetalle() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Estado de la Reserva</h2>
               <div className="flex items-center gap-3">
-                <span className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border ${getEstadoColor(reserva.estadoTexto || reserva.estado)}`}>
-                  {getEstadoIcon(reserva.estadoTexto || reserva.estado)}
+                <span className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border ${getEstadoColor(reserva.estadoTexto || String(reserva.estado))}`}>
+                  {getEstadoIcon(reserva.estadoTexto || String(reserva.estado))}
                   {reserva.estadoTexto || reserva.estado}
                 </span>
               </div>

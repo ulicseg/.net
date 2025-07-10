@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  FileText, 
-  Save, 
-  AlertCircle
+import {
+    AlertCircle,
+    ArrowLeft,
+    Calendar,
+    FileText,
+    Save
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../../components/layout/Layout';
 import { reservaService } from '../../services/reservaService';
-import type { TipoServicio, CreateReservaRequest, UpdateReservaRequest } from '../../types';
+import type { CreateReservaRequest, UpdateReservaRequest } from '../../types';
+import { TipoServicio, TipoServicioOptions } from '../../types';
 
 interface FormData {
   titulo: string;
@@ -27,7 +28,7 @@ export default function ReservaForm() {
     titulo: '',
     descripcion: '',
     fechaReserva: '',
-    tipoServicio: 'Consulta'
+    tipoServicio: TipoServicio.ConsultaMedica
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -67,9 +68,13 @@ export default function ReservaForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    
+    // Para tipoServicio, convertir string a número (enum)
+    const processedValue = name === 'tipoServicio' ? parseInt(value) as TipoServicio : value;
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: processedValue
     }));
     
     // Limpiar error de validación para este campo
@@ -223,11 +228,11 @@ export default function ReservaForm() {
               onChange={handleInputChange}
               className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             >
-              <option value="Consulta">Consulta</option>
-              <option value="Procedimiento">Procedimiento</option>
-              <option value="Cirugia">Cirugía</option>
-              <option value="Revision">Revisión</option>
-              <option value="Emergencia">Emergencia</option>
+              {Object.entries(TipoServicioOptions).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
             </select>
           </div>
 
