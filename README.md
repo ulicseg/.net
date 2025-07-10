@@ -497,9 +497,9 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.m
 
 ## 👥 Equipo de Desarrollo
 
-- **Desarrollador**: [Tu Nombre]
+- **Desarrolladores**: Nicolas Gómez, Pablo Alegre, Gutiérrez Ulises
 - **Materia**: Programación 3
-- **Universidad**: [Tu Universidad]
+- **Universidad**: UTN FRRE
 - **Año**: 2025
 
 ---
