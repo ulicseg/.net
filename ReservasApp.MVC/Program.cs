@@ -70,6 +70,13 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     context.Database.EnsureCreated(); // Crear BD si no existe
     
+    // Inicializar roles del sistema
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>();
+    
+    await SeedRolesAsync(roleManager);
+    await SeedAdminUserAsync(userManager);
+    
     // En producción usarías: context.Database.Migrate();
 }
 
@@ -112,3 +119,52 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+#region Métodos de Inicialización
+/// <summary>
+/// Crea los roles básicos del sistema
+/// ¿Por qué roles fijos? Para simplificar la gestión de permisos
+/// </summary>
+static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+{
+    string[] roles = { "Admin", "Cliente" };
+    
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
+
+/// <summary>
+/// Crea un usuario administrador por defecto
+/// ¿Por qué crear admin por defecto? Para poder gestionar el sistema desde el inicio
+/// </summary>
+static async Task SeedAdminUserAsync(UserManager<Usuario> userManager)
+{
+    const string adminEmail = "admin@reservas.com";
+    const string adminPassword = "Admin123!";
+    
+    if (await userManager.FindByEmailAsync(adminEmail) == null)
+    {
+        var adminUser = new Usuario
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            Nombre = "Administrador",
+            Apellido = "Sistema",
+            EmailConfirmed = true,
+            FechaRegistro = DateTime.UtcNow
+        };
+        
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}
+#endregion

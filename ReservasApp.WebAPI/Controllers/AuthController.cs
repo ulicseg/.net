@@ -262,8 +262,8 @@ namespace ReservasApp.WebAPI.Controllers
                 // Generar token de recuperación
                 var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
                 
-                // Crear URL de callback (apuntará al frontend)
-                var callbackUrl = $"https://localhost:5173/reset-password?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(resetToken)}";
+                // Crear URL de callback (apuntará al frontend SPA)
+                var callbackUrl = $"http://localhost:5173/reset-password?email={Uri.EscapeDataString(user.Email!)}&token={Uri.EscapeDataString(resetToken)}";
 
                 // Enviar email
                 var emailSent = await _emailService.SendPasswordResetEmailAsync(user.Email!, resetToken, callbackUrl);

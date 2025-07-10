@@ -1,0 +1,172 @@
+@model ReservasApp.MVC.Models.Reserva
+
+@{
+    ViewData["Title"] = "Editar Reserva";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-edit"></i> Editar Reserva</h4>
+                    <span class="badge bg-light text-dark fs-6">ID: @Model.Id</span>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.Id)
+                        @Html.HiddenFor(model => model.FechaCreacion)
+                        @Html.HiddenFor(model => model.Estado)
+
+                        <div class="mb-3">
+                            <label asp-for="Titulo" class="form-label">
+                                <i class="fas fa-heading text-primary"></i> <strong>Título de la Reserva</strong>
+                            </label>
+                            <input asp-for="Titulo" class="form-control" placeholder="Ej: Consulta con Dr. Smith" />
+                            <span asp-validation-for="Titulo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TipoServicio" class="form-label">
+                                <i class="fas fa-stethoscope text-success"></i> <strong>Tipo de Servicio</strong>
+                            </label>
+                            <select asp-for="TipoServicio" class="form-select" asp-items="Html.GetEnumSelectList<ReservasApp.MVC.Models.TipoServicio>()">
+                                <option value="">-- Seleccione un tipo de servicio --</option>
+                            </select>
+                            <span asp-validation-for="TipoServicio" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FechaReserva" class="form-label">
+                                <i class="fas fa-calendar text-warning"></i> <strong>Fecha y Hora de la Reserva</strong>
+                            </label>
+                            <input asp-for="FechaReserva" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="FechaReserva" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> Seleccione la fecha y hora deseada para su reserva
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label">
+                                <i class="fas fa-info-circle text-info"></i> <strong>Descripción</strong>
+                            </label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="4" 
+                                placeholder="Describa brevemente el motivo de su reserva o cualquier información adicional relevante..."></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="fas fa-lightbulb"></i> Opcional: Proporcione detalles adicionales que puedan ser útiles
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-flag text-primary"></i> <strong>Estado Actual</strong>
+                            </label>
+                            <div class="p-3 bg-light rounded">
+                                <span class="badge @(Model.Estado == ReservasApp.MVC.Models.EstadoReserva.Activa ? "bg-success" : 
+                                                      Model.Estado == ReservasApp.MVC.Models.EstadoReserva.Completada ? "bg-info" : "bg-danger") fs-6">
+                                    <i class="fas @(Model.Estado == ReservasApp.MVC.Models.EstadoReserva.Activa ? "fa-check-circle" : 
+                                                    Model.Estado == ReservasApp.MVC.Models.EstadoReserva.Completada ? "fa-flag-checkered" : "fa-times-circle")"></i>
+                                    @Model.EstadoTexto
+                                </span>
+                                <div class="form-text mt-2">
+                                    <i class="fas fa-info-circle"></i> El estado se actualiza automáticamente según el flujo de la reserva
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                                <i class="fas fa-eye"></i> Ver Detalles
+                            </a>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información de ayuda -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body text-center">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-question-circle"></i> Ayuda para Editar
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <p class="small mb-0">Puede cambiar la fecha hasta 24 horas antes</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-edit fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0">Modifique los detalles según sus necesidades</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-save fa-2x text-success mb-2"></i>
+                            <p class="small mb-0">Los cambios se guardan inmediatamente</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Establecer fecha mínima como hoy
+        const fechaInput = document.querySelector('input[type="datetime-local"]');
+        if (fechaInput) {
+            const now = new Date();
+            const minDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            fechaInput.min = minDateTime;
+        }
+
+        // Confirmación antes de enviar
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (!confirm('¿Está seguro que desea guardar los cambios realizados en esta reserva?')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            border-radius: 15px;
+        }
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        .btn {
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+        }
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+        .badge {
+            font-size: 0.875rem;
+        }
+    </style>
+}

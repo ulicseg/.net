@@ -92,6 +92,35 @@ export class AuthService {
   getStoredUser(): User | null {
     return apiClient.getCurrentUser();
   }
+
+  /**
+   * Solicitar recuperación de contraseña
+   */
+  async forgotPassword(data: { email: string }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>('/auth/forgot-password', data);
+      return response;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al solicitar recuperación de contraseña');
+    }
+  }
+
+  /**
+   * Restablecer contraseña con token
+   */
+  async resetPassword(data: { 
+    email: string; 
+    token: string; 
+    newPassword: string; 
+    confirmPassword: string 
+  }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>('/auth/reset-password', data);
+      return response;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al restablecer la contraseña');
+    }
+  }
 }
 
 // Exportar instancia única

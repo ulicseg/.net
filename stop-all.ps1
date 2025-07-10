@@ -6,11 +6,15 @@ Write-Host "===============================================" -ForegroundColor Re
 function Stop-ProcessByPort {
     param($Port, $Name)
     try {
-        $process = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess
-        if ($process) {
-            Stop-Process -Id $process -Force -ErrorAction SilentlyContinue
-            Write-Host "✅ $Name (puerto $Port) detenido" -ForegroundColor Green
-        } else {
+        $connections = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
+        foreach ($conn in $connections) {
+            $process = Get-Process -Id $conn.OwningProcess -ErrorAction SilentlyContinue
+            if ($process) {
+                Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+                Write-Host "✅ $Name (puerto $Port) detenido" -ForegroundColor Green
+            }
+        }
+        if (-not $connections) {
             Write-Host "ℹ️ $Name (puerto $Port) no estaba ejecutándose" -ForegroundColor Gray
         }
     }
@@ -20,7 +24,7 @@ function Stop-ProcessByPort {
 }
 
 # Detener por puertos conocidos
-Stop-ProcessByPort 7121 "WebAPI"
+Stop-ProcessByPort 5284 "WebAPI"
 Stop-ProcessByPort 7092 "MVC"  
 Stop-ProcessByPort 5173 "SPA"
 

@@ -78,4 +78,118 @@ public class ReservasController : Controller
             return View(reserva);
         }
     }
+
+    // GET: /Reservas/Details/5
+    public async Task<IActionResult> Details(int id)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var reserva = await _reservaService.GetReservaPorIdAsync(id, user.Id);
+        if (reserva == null)
+        {
+            return NotFound();
+        }
+
+        return View(reserva);
+    }
+
+    // GET: /Reservas/Edit/5
+    public async Task<IActionResult> Edit(int id)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var reserva = await _reservaService.GetReservaPorIdAsync(id, user.Id);
+        if (reserva == null)
+        {
+            return NotFound();
+        }
+
+        return View(reserva);
+    }
+
+    // POST: /Reservas/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Reserva reserva)
+    {
+        if (id != reserva.Id)
+        {
+            return NotFound();
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        try
+        {
+            reserva.UsuarioId = user.Id;
+            ModelState.Remove(nameof(Reserva.UsuarioId));
+
+            if (!ModelState.IsValid)
+            {
+                return View(reserva);
+            }
+
+            var success = await _reservaService.ActualizarReservaAsync(reserva, user.Id);
+            if (success)
+            {
+                TempData["SuccessMessage"] = "¡Reserva actualizada exitosamente!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "No se pudo actualizar la reserva.";
+                return View(reserva);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error actualizando la reserva");
+            TempData["ErrorMessage"] = "Ocurrió un error al actualizar la reserva.";
+            return View(reserva);
+        }
+    }
+
+    // POST: /Reservas/Delete/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        try
+        {
+            var success = await _reservaService.EliminarReservaAsync(id, user.Id);
+            if (success)
+            {
+                TempData["SuccessMessage"] = "¡Reserva eliminada exitosamente!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "No se pudo eliminar la reserva.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error eliminando la reserva");
+            TempData["ErrorMessage"] = "Ocurrió un error al eliminar la reserva.";
+        }
+
+        return RedirectToAction("Index");
+    }
 } 

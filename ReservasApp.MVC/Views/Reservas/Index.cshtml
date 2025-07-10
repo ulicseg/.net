@@ -64,9 +64,13 @@
                                         <a asp-action="Edit" asp-route-id="@reserva.Id" class="btn btn-outline-warning btn-sm">
                                             <i class="fas fa-edit"></i> Editar
                                         </a>
-                                        <a asp-action="Delete" asp-route-id="@reserva.Id" class="btn btn-outline-danger btn-sm">
-                                            <i class="fas fa-trash"></i> Eliminar
-                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@reserva.Id" method="post" style="display: inline;" 
+                                              onsubmit="return confirm('¿Está seguro que desea eliminar esta reserva? Esta acción no se puede deshacer.');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -104,6 +108,14 @@
         }
         .btn-group .btn {
             flex: 1;
+        }
+        .btn-group form {
+            flex: 1;
+            display: inline;
+        }
+        .btn-group form button {
+            width: 100%;
+            border-radius: 0;
         }
     </style>
 } 

@@ -180,3 +180,15 @@ export interface ValidationResult {
   isValid: boolean;
   errors: FormErrors;
 }
+
+// Password recovery types
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}

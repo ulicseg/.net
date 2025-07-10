@@ -68,6 +68,9 @@ namespace ReservasApp.MVC.Controllers
                 {
                     _logger.LogInformation("Usuario {Email} registrado exitosamente", model.Email);
 
+                    // Asignar rol "Cliente" por defecto (igual que en la API)
+                    await _userManager.AddToRoleAsync(usuario, "Cliente");
+
                     // Generar token de confirmación (opcional)
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(usuario);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", 

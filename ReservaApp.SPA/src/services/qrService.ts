@@ -61,10 +61,15 @@ export class QRService {
     try {
       const urlObj = new URL(url);
       const pathSegments = urlObj.pathname.split('/');
-      const accessIndex = pathSegments.findIndex(segment => segment === 'access');
       
-      if (accessIndex !== -1 && accessIndex < pathSegments.length - 1) {
-        return pathSegments[accessIndex + 1];
+      // Buscar tanto 'access' como 'view' para compatibilidad
+      let hashIndex = pathSegments.findIndex(segment => segment === 'view');
+      if (hashIndex === -1) {
+        hashIndex = pathSegments.findIndex(segment => segment === 'access');
+      }
+      
+      if (hashIndex !== -1 && hashIndex < pathSegments.length - 1) {
+        return pathSegments[hashIndex + 1];
       }
       
       return null;
